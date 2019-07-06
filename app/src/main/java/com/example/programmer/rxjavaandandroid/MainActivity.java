@@ -1,13 +1,19 @@
 package com.example.programmer.rxjavaandandroid;
 
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.programmer.rxjavaandandroid.datasource.DataSourceTask;
 import com.example.programmer.rxjavaandandroid.model.Task;
+import com.example.programmer.rxjavaandandroid.view_models.MainViewModel;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -19,9 +25,11 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity {
     private CompositeDisposable disposable;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +40,24 @@ public class MainActivity extends AppCompatActivity {
 
         createSingleObservableWithInterval();
         createSingleObservableWithTimer();
+        createViewModles();
 
 
       //  ordinaryHandler();
+    }
+
+    private void createViewModles() {
+        viewModel= ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getLive().observe(this, new android.arch.lifecycle.Observer<ResponseBody>() {
+            @Override
+            public void onChanged(@Nullable ResponseBody responseBody) {
+                try {
+                    Toast.makeText(MainActivity.this, responseBody.string()+"", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void ordinaryHandler() {
