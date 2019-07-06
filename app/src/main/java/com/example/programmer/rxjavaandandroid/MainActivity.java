@@ -23,6 +23,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -42,8 +43,96 @@ public class MainActivity extends AppCompatActivity {
         createSingleObservableWithTimer();
         createViewModles();
 
+        filerData();
+        distinctData();
+
+
 
       //  ordinaryHandler();
+    }
+
+    private void distinctData() {
+
+        Observable<Task> observable=Observable.fromIterable(DataSourceTask.getDummyTask())
+                .distinct(new Function<Task, String>() {
+                    @Override
+                    public String apply(Task task) throws Exception {
+                        return task.getDescription();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
+
+        observable.subscribe(new Observer<Task>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Task task) {
+                Log.d("rrrrrr",task.getDescription()+" task "+task.isComplete());
+            }
+
+
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+
+
+    }
+
+    private void filerData() {
+
+        Observable observable =Observable.fromIterable(DataSourceTask.getDummyTask())
+                .filter(new Predicate<Task>() {
+                    @Override
+                    public boolean test(Task task) throws Exception {
+                        if (task.isComplete())
+                        {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<Task>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Task task) {
+                Log.d("ezzzzo",task.getDescription()+" task "+task.isComplete());
+            }
+
+
+
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     private void createViewModles() {
