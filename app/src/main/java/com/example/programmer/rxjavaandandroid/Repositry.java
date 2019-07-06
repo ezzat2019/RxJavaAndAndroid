@@ -16,6 +16,9 @@ import okhttp3.ResponseBody;
 
 public class Repositry {
     private static Repositry instance;
+    private String name;
+    private String age;
+    private int age2;
     private final ExecutorService service=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()+1);
 
   public static Repositry getInstance()
