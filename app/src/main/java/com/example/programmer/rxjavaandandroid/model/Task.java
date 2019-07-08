@@ -21,6 +21,15 @@ public class Task {
         isComplete = complete;
     }
 
+    @Override
+    public String toString() {
+        return "Task{" +
+                "description='" + description + '\'' +
+                ", isComplete=" + isComplete +
+                ", priority=" + priority +
+                '}';
+    }
+
     public int getPriority() {
         return priority;
     }
